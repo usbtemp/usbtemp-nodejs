@@ -3,6 +3,13 @@ const SerialPort = require('serialport');
 
 const generator = 0x8c;
 
+const removeListener = (port, ev) =>
+{
+  port.listeners(ev).forEach(element => {
+    port.removeListener(ev, element);
+  });
+};
+
 const serialWrite = (port, buf) => new Promise((resolve, reject) =>
 {
   port.flush();
@@ -13,19 +20,15 @@ const serialWrite = (port, buf) => new Promise((resolve, reject) =>
 const serialRead = (port, n) => new Promise((resolve, reject) =>
 {
   var timeout = setTimeout(() => {
-    port.listeners('data').forEach(element => {
-      port.removeListener('data', element);
-    });
+    removeListener(port, 'data');
     reject(new Error('Read timeout'));
   }, 500);
   var buf = new Buffer(0);
   port.on('data', bytes => {
     buf = Buffer.concat([buf, bytes]);
     if (buf.length == n) {
-      port.listeners('data').forEach(element => {
-        port.removeListener('data', element);
-      });
       clearTimeout(timeout);
+      removeListener(port, 'data');
       resolve(buf);
     }
   })
@@ -41,7 +44,7 @@ const owReset = port => new Promise(async(resolve, reject) =>
   port.update({baudRate: 115200});
   const rbuff = buf[0];
   if (rbuff == 0xf0) {
-	  return reject(new Error('No device present'));
+	return reject(new Error('No device present'));
   }
   else if (rbuff == 0x00) {
     return reject(new Error('Short circuit'));
@@ -108,8 +111,12 @@ class Thermometer extends EventEmitter {
 
   constructor(port) {
     super();
-    this.serialport = new SerialPort(port);
+    this.serialport = new SerialPort(port, {autoOpen: false});
     this.serialport.once('open', () => this.emit('open'));
+  }
+
+  Open() {
+    this.serialport.open();
   }
 
   Close() {
