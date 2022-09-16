@@ -1,12 +1,12 @@
 {
   "name": "usbtemp",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "USB Thermometer interface",
   "private": true,
   "author": "jaka",
   "license": "MIT",
   "main": "usbtemp.js",
   "dependencies": {
-    "serialport": "9.2.x"
+    "serialport": "10.4.x"
   }
 }

@@ -3,7 +3,7 @@ Source code for `Thermometer` class. Requires `serialport` module.
 
 ### Installation
 ```
-npm i https://github.com/usbtemp/usbtemp-nodejs.git 
+npm i https://github.com/usbtemp/usbtemp-nodejs.git
 ```
 
 ### Usage
@@ -27,5 +27,7 @@ thermometer.Open();
 
 This software is in alpha stage, contributions are welcome.
 
-#### Notice
+#### Note
 When installing dependency serialport *g++* and *make* are needed, at least on Debian/Ubuntu.
+
+This version works on Debian 11 with nodejs v12 from its repository.

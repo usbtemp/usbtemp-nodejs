@@ -1,5 +1,5 @@
 const EventEmitter = require('events');
-const SerialPort = require('serialport');
+const { SerialPort } = require('serialport');
 
 const generator = 0x8c;
 
@@ -111,7 +111,7 @@ class Thermometer extends EventEmitter {
 
   constructor(port) {
     super();
-    this.serialport = new SerialPort(port, {autoOpen: false});
+    this.serialport = new SerialPort({autoOpen: false, baudRate: 9600, path: port});
     this.serialport.once('open', () => this.emit('open'));
   }
 
@@ -132,7 +132,7 @@ class Thermometer extends EventEmitter {
         var value = await owRead(this.serialport);
         rom.writeUInt8(value, i);
       }
-      if (lsb_crc8(rom.slice(0, 7), generator) == rom.readUInt8(7)) {
+      if (!lsb_crc8(rom, generator)) {
         return resolve(rom);
       }
       return reject(new Error('Invalid CRC'));
@@ -154,7 +154,7 @@ class Thermometer extends EventEmitter {
           var value = await owRead(this.serialport);
           sp.writeUInt8(value, i);
         }
-        if (lsb_crc8(sp.slice(0, 8), generator) == sp.readUInt8(8)) {
+        if (!lsb_crc8(sp, generator)) {
           const temp = sp.readInt16LE(0);
           return resolve(temp / 16);
         }
