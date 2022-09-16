@@ -26,3 +26,6 @@ thermometer.Open();
 ```
 
 This software is in alpha stage, contributions are welcome.
+
+#### Notice
+When installing dependency serialport *g++* and *make* are needed, at least on Debian/Ubuntu.

@@ -23,7 +23,7 @@ const serialRead = (port, n) => new Promise((resolve, reject) =>
     removeListener(port, 'data');
     reject(new Error('Read timeout'));
   }, 500);
-  var buf = new Buffer(0);
+  var buf = Buffer.alloc(0);
   port.on('data', bytes => {
     buf = Buffer.concat([buf, bytes]);
     if (buf.length == n) {
@@ -37,7 +37,7 @@ const serialRead = (port, n) => new Promise((resolve, reject) =>
 const owReset = port => new Promise(async(resolve, reject) =>
 {
   port.update({baudRate: 9600});
-  const wbuff = new Buffer(1);
+  const wbuff = Buffer.alloc(1);
   wbuff.writeUInt8(0xf0, 0);
   serialWrite(port, wbuff);
   const buf = await serialRead(port, 1);
@@ -59,7 +59,7 @@ const owReset = port => new Promise(async(resolve, reject) =>
 
 const owWriteByte = (port, byte) => new Promise(async(resolve, reject) =>
 {
-  const wbuff = new Buffer(8);
+  const wbuff = Buffer.alloc(8);
   for (var i = 0; i < 8; i++) {
     wbuff.writeUInt8(byte & 0x01 ? 0xff : 0x00, i);
     byte >>= 1;
@@ -127,7 +127,7 @@ class Thermometer extends EventEmitter {
     return new Promise(async(resolve, reject) => {
       await owReset(this.serialport);
       await owWrite(this.serialport, 0x33);
-      var rom = new Buffer(8);
+      var rom = Buffer.alloc(8);
       for (var i = 0; i < 8; i++) {
         var value = await owRead(this.serialport);
         rom.writeUInt8(value, i);
@@ -149,7 +149,7 @@ class Thermometer extends EventEmitter {
         await owReset(this.serialport);
         await owWrite(this.serialport, 0xcc);
         await owWrite(this.serialport, 0xbe);
-        var sp = new Buffer(9);
+        var sp = Buffer.alloc(9);
         for (var i = 0; i < 9; i++) {
           var value = await owRead(this.serialport);
           sp.writeUInt8(value, i);
