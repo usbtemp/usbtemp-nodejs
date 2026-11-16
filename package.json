@@ -1,6 +1,6 @@
 {
   "name": "usbtemp",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "USB Thermometer interface",
   "private": true,
   "author": "jaka",
